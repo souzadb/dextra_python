@@ -24,7 +24,7 @@ lista_ingredientes = {
 
 pedido = {
     'Lanches': [],
-    'Promocoes': {'Promocao': 'Nenhuma promoção participante'},
+    'Promocoes': {},
     'Valor Total': 0
 }
 
@@ -70,6 +70,18 @@ class AdicionarLancheCarrinho(Resource):
 
             valor_lanche = sum([lista_ingredientes[i]['valor'] for i in ingredientes_lanches])
 
+            if ingredientes_lanches.count('203') >= 3:
+                valor_lanche -= int(ingredientes_lanches.count('203') / 3) * lista_ingredientes['203']['valor']
+                pedido['Promocoes'].update({'MUITA CARNE': 'Parabéns, seu desconto de CARNE foi ativado!'})
+
+            if ingredientes_lanches.count('205') >= 3:
+                valor_lanche -= int(ingredientes_lanches.count('205') / 3) * lista_ingredientes['205']['valor']
+                pedido['Promocoes'].update({'MUITO QUEIJO': 'Parabéns, seu desconto de QUEIJO foi ativado!'})
+
+            if '201' in ingredientes_lanches and '202' not in ingredientes_lanches:
+                valor_lanche * 0.9
+                pedido['Promocoes'].update({'LIGHT': 'Parabéns, seu desconto LIGHT foi ativado!'})
+
             pedido['Lanches'].append({
                 'id': id_lanche,
                 'nome': lista_lanches[id_lanche]['nome'],
@@ -88,6 +100,9 @@ class Promocoes(Resource):
 class Pedido(Resource):
     def get(self):
         valor_total = 0
+
+        if pedido['Promocoes'] == {}:
+            pedido['Promocoes'].update({'Vazio': 'Nenhuma promoção ativada'})
 
         if pedido['Lanches']:
             for pedido_lista in pedido['Lanches']:
