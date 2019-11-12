@@ -1,5 +1,6 @@
 from flask import Flask
 from flask_restful import Resource, Api, reqparse
+from waitress import serve
 
 app = Flask(__name__)
 api = Api(app)
@@ -24,7 +25,11 @@ lista_ingredientes = {
 
 pedido = {
     'Lanches': [],
-    'Promocoes': {},
+    'Promocoes': {
+        'MUITA CARNE': 'Desativada',
+        'MUITO QUEIJO': 'Desativada',
+        'LIGHT': 'Desativada'
+    },
     'Valor Total': 0
 }
 
@@ -45,15 +50,18 @@ class Ingredientes(Resource):
 
 class IngredientesDoLanche(Resource):
     def get(self, id_lanche):
-        retorno = {}
-        
-        lista_ingredientes_lanche = {'ingredientes': [lista_ingredientes[i]['nome'] for i in lista_lanches[id_lanche]['ingredientes']]}
-        valor_lanche = {'valor': sum([lista_ingredientes[i]['valor'] for i in lista_lanches[id_lanche]['ingredientes']])}
+        if id_lanche in lista_lanches:
+            retorno = {}
+            
+            lista_ingredientes_lanche = {'ingredientes': [lista_ingredientes[i]['nome'] for i in lista_lanches[id_lanche]['ingredientes']]}
+            valor_lanche = {'valor': sum([lista_ingredientes[i]['valor'] for i in lista_lanches[id_lanche]['ingredientes']])}
 
-        retorno.update(lista_ingredientes_lanche)
-        retorno.update(valor_lanche)
+            retorno.update(lista_ingredientes_lanche)
+            retorno.update(valor_lanche)
 
-        return retorno
+            return retorno
+        else:
+            return {'Erro': 'Lanche não cadastrado'}
 
 class AdicionarLancheCarrinho(Resource):
     def put(self, id_lanche):
@@ -101,9 +109,6 @@ class Pedido(Resource):
     def get(self):
         valor_total = 0
 
-        if pedido['Promocoes'] == {}:
-            pedido['Promocoes'].update({'Vazio': 'Nenhuma promoção ativada'})
-
         if pedido['Lanches']:
             for pedido_lista in pedido['Lanches']:
                 valor_total += pedido_lista['valor']
@@ -121,4 +126,5 @@ api.add_resource(AdicionarLancheCarrinho, '/api/pedido/<id_lanche>')
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port='8080')
+    #app.run(host='0.0.0.0', port='8080')
+    serve(app, host='0.0.0.0', port=8080)
