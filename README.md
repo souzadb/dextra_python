@@ -33,5 +33,21 @@ pyhton start.py
 Aqui constam algumas implementações que considero muito necessárias e outras boas otimizações
 de serviço ou de design:
 
-- [] Implementação de Testes
+- [ ] Implementação de Testes
 - [ ] Adição de limpeza de carrinho
+- [ ] Ajuste de regra de negócio de prioridade de desconto
+- [ ] Adição de mais de um pedido do mesmo modelo por PUT
+- [ ] Adição de ingredientes / lanches / promoções por POST
+- [ ] Sujestões do 'Lanche do Dia'
+- [ ] Sistema de sujestão de um complemento do pedido por AI
+- [ ] Adição de bebiba e acompanhamento para criação de COMBOS
+
+## Versão
+
+```
+0.0.0.1
+```
+
+## Autores
+
+- Guilherme Souza
